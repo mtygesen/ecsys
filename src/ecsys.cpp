@@ -1,5 +1,6 @@
 #include <iostream>
 
-int main(void) {
-    std::cout << "hello world" << '\n';
- }
+#include "container/sparse_set.hpp"
+#include "registry.hpp"
+
+int main(void) {}

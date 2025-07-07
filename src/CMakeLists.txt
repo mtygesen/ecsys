@@ -4,6 +4,8 @@ list(FILTER LIB_SOURCES EXCLUDE REGEX "${PROJECT_NAME}\\.cpp$")
 
 add_executable(${PROJECT_NAME} "${PROJECT_SOURCE_DIR}/src/${PROJECT_NAME}.cpp")
 
+target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_SOURCE_DIR}/include)
+
 if(LIB_SOURCES)
     add_library(lib${PROJECT_NAME} STATIC ${LIB_SOURCES})
     target_include_directories(lib${PROJECT_NAME} PUBLIC ${CMAKE_SOURCE_DIR}/include)
