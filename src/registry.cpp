@@ -1,4 +1,4 @@
-#include "registry.hpp"
+#include "ecsys/registry.hpp"
 
 #include <iostream>
 #include <sstream>

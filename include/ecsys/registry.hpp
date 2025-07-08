@@ -8,9 +8,9 @@
 #include <memory>
 #include <numeric>
 
-#include "container/sparse_set.hpp"
-#include "util/concepts.hpp"
-#include "util/types.hpp"
+#include "ecsys/container/sparse_set.hpp"
+#include "ecsys/util/concepts.hpp"
+#include "ecsys/util/types.hpp"
 
 namespace ecsys {
 template <class... Components>

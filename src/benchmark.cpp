@@ -1,5 +1,5 @@
-#include "registry.hpp"
-#include "util/benchmark.hpp"
+#include "ecsys/registry.hpp"
+#include "ecsys/util/benchmark.hpp"
 
 using namespace ecsys;
 

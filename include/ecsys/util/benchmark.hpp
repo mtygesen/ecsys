@@ -4,7 +4,7 @@
 #include <chrono>
 #include <vector>
 
-#include "registry.hpp"
+#include "ecsys/registry.hpp"
 
 namespace ecsys::benchmark {
 class Timer {

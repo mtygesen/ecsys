@@ -9,7 +9,7 @@
 #include <string>
 #include <vector>
 
-#include "util/types.hpp"
+#include "ecsys/util/types.hpp"
 
 namespace ecsys {
 class ISparseSet {
