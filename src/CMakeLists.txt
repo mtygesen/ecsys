@@ -6,14 +6,13 @@ add_executable(benchmark "${PROJECT_SOURCE_DIR}/src/benchmark.cpp")
 target_include_directories(benchmark PUBLIC ${CMAKE_SOURCE_DIR}/include)
 
 if(LIB_SOURCES)
-    add_library(lib${PROJECT_NAME} STATIC ${LIB_SOURCES})
-    target_include_directories(lib${PROJECT_NAME} PUBLIC ${CMAKE_SOURCE_DIR}/include)
-    set_target_properties(lib${PROJECT_NAME} PROPERTIES PREFIX "")
+    add_library(${PROJECT_NAME} STATIC ${LIB_SOURCES})
+    target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_SOURCE_DIR}/include)
     
     if(MINGW)
         # bug with mingw so allow multiple defs: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=110572
-        target_link_libraries(benchmark PRIVATE lib${PROJECT_NAME} -static-libstdc++ -static-libgcc -Wl,--allow-multiple-definition)
+        target_link_libraries(benchmark PRIVATE ${PROJECT_NAME} -static-libstdc++ -static-libgcc -Wl,--allow-multiple-definition)
     else()
-        target_link_libraries(benchmark PRIVATE lib${PROJECT_NAME} -static-libstdc++ -static-libgcc)
+        target_link_libraries(benchmark PRIVATE ${PROJECT_NAME} -static-libstdc++ -static-libgcc)
     endif()
 endif()
