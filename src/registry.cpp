@@ -70,9 +70,3 @@ void Registry::printEntityComponents(EntityId id) {
 
     std::cout << ss.str() << '\n';
 }
-
-Registry::ComponentMask &Registry::getEntityMask(EntityId id) {
-    auto *mask = _entityMasks.get(id);
-    assert(mask != nullptr && "Entity mask not found");
-    return *mask;
-}

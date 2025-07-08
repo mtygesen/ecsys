@@ -175,7 +175,11 @@ class Registry {
         return nextIndex++;
     }
 
-    ComponentMask &getEntityMask(EntityId id);
+    ComponentMask &getEntityMask(EntityId id) {
+        auto *mask = _entityMasks.get(id);
+        assert(mask != nullptr && "Entity mask not found");
+        return *mask;
+    }
 
     std::vector<EntityId> _availableEntities;
 
