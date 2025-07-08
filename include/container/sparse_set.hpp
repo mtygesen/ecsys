@@ -2,6 +2,7 @@
 #define SPARSE_SET_HPP
 
 #include <algorithm>
+#include <cassert>
 #include <iostream>
 #include <numeric>
 #include <sstream>
@@ -19,35 +20,59 @@ class ISparseSet {
     virtual bool empty() const = 0;
     virtual void clear() = 0;
     virtual bool contains(EntityId id) const = 0;
-    virtual void printDense() const = 0;
+    virtual std::vector<EntityId> getEntities() const = 0;
 };
 
-template <class Component>
+template <class Obj>
 class SparseSet : public ISparseSet {
    public:
-    Component *add(EntityId id) { return add(id, Component{}); }
+    Obj *add(EntityId id) { return add(id, Obj{}); }
 
-    Component *add(EntityId id, Component &&comp) {
+    Obj *add(EntityId id, Obj &&obj) {
         size_t denseIdx = getDenseIndex(id);
         if (denseIdx != TOMBSTONE) {
-            _denseLayer[denseIdx] = std::move(comp);
+            _denseLayer[denseIdx] = std::move(obj);
             _denseToEntity[denseIdx] = id;
             return &_denseLayer[denseIdx];
         }
 
         setDenseIndex(id, _denseLayer.size());
 
-        _denseLayer.push_back(std::move(comp));
+        _denseLayer.push_back(std::move(obj));
         _denseToEntity.push_back(id);
         return &_denseLayer.back();
     }
 
-    Component *get(EntityId id) {
+    template <class... Args>
+    Obj *emplace(EntityId id, Args &&...args) {
+        size_t denseIdx = getDenseIndex(id);
+        if (denseIdx != TOMBSTONE) {
+            _denseLayer[denseIdx] = Obj(std::forward<Args>(args)...);
+            _denseToEntity[denseIdx] = id;
+            return &_denseLayer[denseIdx];
+        }
+
+        setDenseIndex(id, _denseLayer.size());
+        _denseLayer.emplace_back(std::forward<Args>(args)...);
+        _denseToEntity.push_back(id);
+        return &_denseLayer.back();
+    }
+
+    Obj *get(EntityId id) {
         size_t denseIdx = getDenseIndex(id);
         return (denseIdx != TOMBSTONE) ? &_denseLayer[denseIdx] : nullptr;
     }
 
-    const std::vector<Component> &data() const { return _denseLayer; }
+    Obj &getRef(EntityId id) {
+        size_t denseIdx = getDenseIndex(id);
+        if (denseIdx == TOMBSTONE) {
+            assert(false && "Entity does not exist in SparseSet");
+        }
+
+        return _denseLayer[denseIdx];
+    }
+
+    const std::vector<Obj> &data() const { return _denseLayer; }
 
     void remove(EntityId id) override {
         size_t denseIdx = getDenseIndex(id);
@@ -77,18 +102,7 @@ class SparseSet : public ISparseSet {
 
     bool contains(EntityId id) const override { return getDenseIndex(id) != TOMBSTONE; }
 
-    void printDense() const override {
-        std::stringstream ss;
-        std::string delim;
-        for (const Component &comp : _denseLayer) {
-            ss << delim << comp;
-            if (delim.empty()) {
-                delim = ", ";
-            }
-        }
-
-        std::cout << ss.str() << '\n';
-    }
+    std::vector<EntityId> getEntities() const { return _denseToEntity; }
 
    private:
     size_t getDenseIndex(EntityId id) const {
@@ -120,7 +134,7 @@ class SparseSet : public ISparseSet {
     using Page = std::vector<size_t>;
 
     std::vector<Page> _sparseLayer;
-    std::vector<Component> _denseLayer;
+    std::vector<Obj> _denseLayer;
     std::vector<EntityId> _denseToEntity;
 };
 }  // namespace ecsys
