@@ -65,6 +65,12 @@ class Registry {
         return (getComponentBit<Components>(mask) && ...);
     }
 
+    template <class... Components>
+    bool hasAnyComponent(EntityId id) {
+        auto &mask = getEntityMask(id);
+        return (getComponentBit<Components>(mask) || ...);
+    }
+
    private:
     static constexpr size_t MAX_COMPONENTS = 64;
     using ComponentMask = std::bitset<MAX_COMPONENTS>;
